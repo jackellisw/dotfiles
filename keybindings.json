@@ -19,7 +19,7 @@
   {
     "key": "space ,",
     "command": "workbench.action.showAllEditors",
-    "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+    "when": "vim.mode == 'Normal' && editorTextFocus"
   },
   {
     "key": "space e",
@@ -30,7 +30,7 @@
         "workbench.files.action.focusFilesExplorer"
       ]
     },
-    "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus) && !sideBarFocus"
+    "when": "vim.mode == 'Normal' && editorTextFocus && !sideBarFocus"
   },
   {
     "key": "space e",
@@ -49,19 +49,14 @@
     "when": "!sideBarFocus && editorTextFocus && vim.mode == 'Normal'"
   },
   {
-    "key": "space e",
-    "when": "vim.mode == 'Normal' && editorTextFocus && foldersViewVisible",
-    "command": "workbench.action.toggleSidebarVisibility"
-  },
-  {
     "key": "s h",
     "command": "workbench.action.splitEditor",
-    "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+    "when": "vim.mode == 'Normal' && editorTextFocus"
   },
   {
     "key": "s v",
     "command": "workbench.action.splitEditorDown",
-    "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+    "when": "vim.mode == 'Normal' && editorTextFocus"
   },
 
   // Coding
@@ -98,17 +93,17 @@
   {
     "key": "space b d",
     "command": "workbench.action.closeActiveEditor",
-    "when": "(vim.mode == 'Normal' && editorTextFocus) || !inputFocus"
+    "when": "vim.mode == 'Normal' && editorTextFocus"
   },
   {
     "key": "space b o",
     "command": "workbench.action.closeOtherEditors",
-    "when": "(vim.mode == 'Normal' && editorTextFocus) || !inputFocus"
+    "when": "vim.mode == 'Normal' && editorTextFocus"
   },
   {
     "key": "space space",
     "command": "workbench.action.quickOpen",
-    "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+    "when": "vim.mode == 'Normal' && editorTextFocus"
   },
   {
     "key": "space g d",
@@ -128,12 +123,12 @@
   {
     "key": "space s g",
     "command": "workbench.action.findInFiles",
-    "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
+    "when": "vim.mode == 'Normal' && editorTextFocus"
   },
   {
     "key": "space g g",
     "command": "runCommands",
-    "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)",
+    "when": "vim.mode == 'Normal' && editorTextFocus",
     "args": {
       "commands": ["workbench.view.scm", "workbench.scm.focus"]
     }
@@ -141,10 +136,10 @@
   {
     "key": "ctrl-n",
     "command": "editor.action.addSelectionToNextFindMatch",
-    "when": "(vim.mode == 'Normal' || vim.mode == 'Visual') && (editorTextFocus || !inputFocus)"
+    "when": "(vim.mode == 'Normal' || vim.mode == 'Visual') && editorTextFocus"
   },
 
-  // File Explorer
+  // File Explorer (These were already well-scoped, no changes needed)
   {
     "key": "r",
     "command": "renameFile",
@@ -207,7 +202,7 @@
   {
     "key": "space d a",
     "command": "workbench.action.debug.selectandstart",
-    "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus) && debuggersAvailable"
+    "when": "vim.mode == 'Normal' && editorTextFocus && debuggersAvailable"
   },
   {
     "key": "space d t",
@@ -217,7 +212,7 @@
   {
     "key": "space d o",
     "command": "workbench.action.debug.stepOver",
-    "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus) && inDebugMode && debugState == 'stopped'"
+    "when": "vim.mode == 'Normal' && editorTextFocus && inDebugMode && debugState == 'stopped'"
   },
   {
     "key": "space d b",
@@ -232,6 +227,17 @@
   {
     "key": "space d c",
     "command": "workbench.action.debug.continue",
-    "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus) && inDebugMode && debugState == 'stopped'"
+    "when": "vim.mode == 'Normal' && editorTextFocus && inDebugMode && debugState == 'stopped'"
+  },
+  {
+    "key": "space f g",
+    "command": "workbench.action.findInFiles",
+    "when": "vim.mode == 'Normal' && editorTextFocus"
+  },
+  {
+    "key": "space f w",
+    "command": "workbench.action.findInFiles",
+    "args": { "query": "\\b\\w*\\b", "isRegex": true },
+    "when": "vim.mode == 'Normal' && editorTextFocus"
   }
 ]

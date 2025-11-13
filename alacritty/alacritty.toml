@@ -1,14 +1,17 @@
-
 [env]
 TERM = "xterm-256color"
+WINIT_X11_SCALE_FACTOR = "1"
 
 [window]
-dynamic_padding = false
-padding = {x = 2, y = 5}
-decorations = "none"
-title = "Alacritty@Endevour"
-opacity = 0.98
+#####dynamic_padding = true
+decorations = "full"
+title = "Alacritty@CachyOS"
+opacity = 1.0
 decorations_theme_variant = "Dark"
+
+[window.dimensions]
+columns = 100
+lines = 30
 
 [window.class]
 instance = "Alacritty"
@@ -22,22 +25,22 @@ multiplier = 3
 draw_bold_text_with_bright_colors = true
 
 [font]
-size = 15
+size = 12
 
 [font.normal]
-family = "FiraCode Nerd Font"
+family = "monospace"
 style = "Regular"
 
 [font.bold]
-family = "FiraCode Nerd Font"
+family = "monospace"
 style = "Bold"
 
 [font.italic]
-family = "FiraCode Nerd Font"
+family = "monospace"
 style = "Italic"
 
 [font.bold_italic]
-family = "FiraCode Nerd Font"
+family = "monospace"
 style = "Bold Italic"
 
 [selection]
@@ -45,7 +48,7 @@ semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
 save_to_clipboard = true
 
 [cursor]
-style = "Underline"
+style = "Block"
 vi_mode_style = "None"
 unfocused_hollow = true
 thickness = 0.15
@@ -135,11 +138,3 @@ action = "ResetFontSize"
 [general]
 live_config_reload = true
 working_directory = "None"
-import = [
-  # uncomment the flavour you want below:
-    #  "~/.config/alacritty/catppuccin-latte.toml"
-  # "~/.config/alacritty/catppuccin-frappe.toml"
-   "~/.config/alacritty/catppuccin-macchiato.toml"
-  # "~/.config/alacritty/catppuccin-mocha.toml"
-]
-

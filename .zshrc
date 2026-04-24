@@ -1,103 +1,81 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-# fi
-#
+# ─── Profiling (uncomment to benchmark) ──────────────────────────────
+# zmodload zsh/zprof
 
-# Path to your oh-my-zsh installation.
-export ZSH="/usr/share/oh-my-zsh"
-ZSH_THEME="fox"
-
-# Uncomment the following line if pasting URLs and other text is messed up.
+# ─── Oh My Zsh settings (set BEFORE sourcing) ────────────────────────
+export ZSH="$HOME/.oh-my-zsh"
+DISABLE_AUTO_UPDATE="true"
 DISABLE_MAGIC_FUNCTIONS="true"
+DISABLE_COMPFIX="true"
+skip_global_compinit=1
 
-# Uncomment the following line to enable command auto-correction.
-#ENABLE_CORRECTION="true"
+# ─── Faster, portable compinit ───────────────────────────────────────
+autoload -Uz compinit
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+    compinit
+else
+    compinit -C
+fi
 
-# Uncomment the following line to display red dots whilst waiting for completion.
-COMPLETION_WAITING_DOTS="true"
+# ─── No OMZ theme — Starship takes over ──────────────────────────────
+ZSH_THEME=""
 
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-[[ -z "${plugins[*]}" ]] && plugins=(git fzf extract)
+# ─── Plugins ─────────────────────────────────────────────────────────
+plugins=(
+  git
+  zsh-autosuggestions
+  fast-syntax-highlighting
+)
 
 source $ZSH/oh-my-zsh.sh
 
-# User configuration
+# ─── Autosuggestions tuning ──────────────────────────────────────────
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#663399,standout"
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=300
+ZSH_AUTOSUGGEST_USE_ASYNC=1
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ─── Global alias expansion on space ─────────────────────────────────
+globalias() {
+   if [[ $LBUFFER =~ '[a-zA-Z0-9]+$' ]]; then
+       zle _expand_alias
+       zle expand-word
+   fi
+   zle self-insert
+}
+zle -N globalias
+bindkey " " globalias
+bindkey "^[[Z" magic-space
+bindkey -M isearch " " magic-space
 
-# Ignore commands that start with spaces and duplicates.
+# ─── SSH agent: start once, not every prompt ─────────────────────────
+if [[ -z "$SSH_AUTH_SOCK" ]]; then
+    eval "$(ssh-agent -s)" > /dev/null
+    ssh-add ~/.ssh/id_github_sign_and_auth 2>/dev/null
+fi
 
-export HISTCONTROL=ignoreboth
+# ─── fnm (Fast Node Manager) ─────────────────────────────────────────
+if command -v fnm &> /dev/null; then
+    eval "$(fnm env --use-on-cd --shell zsh)"
+fi
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ─── PATH ────────────────────────────────────────────────────────────
+typeset -U path                      # dedupe PATH entries automatically
+path=(
+    $HOME/.local/bin
+    $path
+)
+export PATH
 
-# Don't add certain commands to the history file.
+# ─── History ─────────────────────────────────────────────────────────
+HISTSIZE=50000
+SAVEHIST=50000
+HISTFILE=~/.zsh_history
+setopt HIST_IGNORE_ALL_DUPS HIST_IGNORE_SPACE SHARE_HISTORY INC_APPEND_HISTORY
 
-export HISTIGNORE="&:[bf]g:c:clear:history:exit:q:pwd:* --help"
+# ─── Starship — MUST be last so it owns the prompt ───────────────────
+eval "$(starship init zsh)"
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ─── Aliases ─────────────────────────────────────────────────────────
+[ -f ~/.zsh_aliases ] && source ~/.zsh_aliases
 
-# Use custom `less` colors for `man` pages.
-
-export LESS_TERMCAP_md="$(tput bold 2> /dev/null; tput setaf 2 2> /dev/null)"
-export LESS_TERMCAP_me="$(tput sgr0 2> /dev/null)"
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-# Make new shells get the history lines from all previous
-# shells instead of the default "last window closed" history.
-
-export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-#alias open="xdg-open"
-alias make="make -j`nproc`"
-alias ninja="ninja -j`nproc`"
-alias n="ninja"
-alias cl="clear"
-alias rmpkg="sudo pacman -Rsn"
-alias cleanch="sudo pacman -Scc"
-alias fixpacman="sudo rm /var/lib/pacman/db.lck"
-alias update="sudo pacman -Syu"
-alias vim="nvim"
-
-# Cleanup orphaned packages
-alias cleanup="sudo pacman -Rsn $(pacman -Qtdq)"
-
-# Get the error messages from journalctl
-alias jctl="journalctl -p 3 -xb"
-
-# Recent installed packages
-alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
-
-#source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
-
-# Fish-like syntax highlighting and autosuggestions
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-
-# Use history substring search
-source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
-
-# pkgfile "command not found" handler
-source /usr/share/doc/pkgfile/command-not-found.zsh
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-source /usr/share/fzf/key-bindings.zsh
-source /usr/share/fzf/completion.zsh
-export PATH=$PATH:$HOME/go/bin
+# zprof
